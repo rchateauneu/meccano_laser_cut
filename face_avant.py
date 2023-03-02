@@ -21,8 +21,18 @@ led_radius = 2.5
 x_cadran = 59
 y_cadran = 41
 
+x_breadboard = 82
+y_breadboard = 54
+
 x_offset_cadran = 10
 y_offset_cadran = 10
+
+def draw_hole_cross(the_output, x_pos, y_pos, hole_diameter, hole_color):
+    line_length = 1.5 * hole_diameter
+    draw_line_actual(the_output, x_pos - line_length, y_pos, x_pos + line_length, y_pos, hole_color)
+    draw_line_actual(the_output, x_pos, y_pos - line_length, x_pos, y_pos + line_length, hole_color)
+    draw_hole_actual(the_output, x_pos, y_pos, hole_diameter, hole_color)
+
 
 def draw_face_avant():
     the_output = init_output_actual("face_avant.dxf")
@@ -33,10 +43,10 @@ def draw_face_avant():
     x_space_button = x_cadran / 4
 
     x_offset_button = x_offset_cadran
-    draw_hole_actual(the_output, x_offset_button + 0.5 * x_space_button, y_buttons, button_radius, COLOR_DARK_BLUE)
-    draw_hole_actual(the_output, x_offset_button + 1.5 * x_space_button, y_buttons, button_radius, COLOR_DARK_BLUE)
-    draw_hole_actual(the_output, x_offset_button + 2.5 * x_space_button, y_buttons, button_radius, COLOR_DARK_BLUE)
-    draw_hole_actual(the_output, x_offset_button + 3.5 * x_space_button, y_buttons, button_radius, COLOR_DARK_BLUE)
+    draw_hole_cross(the_output, x_offset_button + 0.5 * x_space_button, y_buttons, button_radius, COLOR_DARK_BLUE)
+    draw_hole_cross(the_output, x_offset_button + 1.5 * x_space_button, y_buttons, button_radius, COLOR_DARK_BLUE)
+    draw_hole_cross(the_output, x_offset_button + 2.5 * x_space_button, y_buttons, button_radius, COLOR_DARK_BLUE)
+    draw_hole_cross(the_output, x_offset_button + 3.5 * x_space_button, y_buttons, button_radius, COLOR_DARK_BLUE)
 
     # y_leds = y_buttons + 15
     y_space_led = y_cadran / 3
@@ -47,9 +57,9 @@ def draw_face_avant():
     x_offset_leds = xa + x_offset_cadran + x_cadran + 10
     y_leds = y_offset_cadran
 
-    draw_hole_actual(the_output, x_offset_leds, y_leds + 0.5 * y_space_led, led_radius, COLOR_DARK_BLUE)
-    draw_hole_actual(the_output, x_offset_leds, y_leds + 1.5 * y_space_led, led_radius, COLOR_DARK_BLUE)
-    draw_hole_actual(the_output, x_offset_leds, y_leds + 2.5 * y_space_led, led_radius, COLOR_DARK_BLUE)
+    draw_hole_cross(the_output, x_offset_leds, y_leds + 0.5 * y_space_led, led_radius, COLOR_DARK_BLUE)
+    draw_hole_cross(the_output, x_offset_leds, y_leds + 1.5 * y_space_led, led_radius, COLOR_DARK_BLUE)
+    draw_hole_cross(the_output, x_offset_leds, y_leds + 2.5 * y_space_led, led_radius, COLOR_DARK_BLUE)
 
     exit_output(the_output)
 
