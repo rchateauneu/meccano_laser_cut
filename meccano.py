@@ -1,6 +1,6 @@
 import sys
 
-from dxflib *
+from dxflib import *
 
 # Meccano system dates back to 1901 and is designed to Imperial sizes ie 1/2 inch hole spacings
 # Plain holes in all Meccano parts are all 4.1mm in diameter, and are spaced at 1/2" (12.7mm),
@@ -32,6 +32,7 @@ class MeccanoPart:
             raise Exception("Too big y_pos ", y_pos)
 
     def Line(self, x_pos, y_pos, number, direction = HOLES_RIGHT):
+        print("x_pos=", x_pos, "y_pos=", y_pos, "number=", number)
         for index in range(number):
             self._AddHoles(x_pos, y_pos)
             if direction == HOLES_RIGHT:
@@ -45,7 +46,7 @@ class MeccanoPart:
             else:
                 raise Exception("Invalid direction", direction)
                 
-    def Rectanlge(self, x_pos, y_pos, x_number, y_number):
+    def Rectangle(self, x_pos, y_pos, x_number, y_number):
         for index in range(x_number):
             self.Line(x_pos, y_pos, y_number, HOLES_RIGHT)
             ++x_pos
@@ -67,16 +68,22 @@ class MeccanoPart:
 
 
 if __name__ == "__main__":
+    #  python .\meccano.py toto.dxf 20 20 Line 1 1 10
     filename = sys.argv[1]
+    print("filename=", filename)
     if not filename.endswith(".dxf"):
         raise Exception("Invalid filename", filename)
 
-    x_size = int(sys.argv[1])
-    y_size = int(sys.argv[2])
+    x_size = int(sys.argv[2])
+    y_size = int(sys.argv[3])
     meccano = MeccanoPart(x_size, y_size)
-    functionname = sys.argv[2]
+    functionname = sys.argv[4]
+    print("functionname=", functionname)
     function = getattr(meccano, functionname)
+    #exit()
     fd = open(filename, "w");
     
-    function(*sys.argv[2,])
+    function( *[int(a) for a in sys.argv[5:]] )
+    
+    meccano.DrawDxf(fd)
     fd.close()
