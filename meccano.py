@@ -30,19 +30,22 @@ class MeccanoPart:
             raise Exception("Negative x_pos ", x_pos)
         if y_pos >= self._y_size:
             raise Exception("Too big y_pos ", y_pos)
+        self._holes.add((x_pos, y_pos))
+        print("Adding", (x_pos, y_pos))
 
     def Line(self, x_pos, y_pos, number, direction = HOLES_RIGHT):
         print("x_pos=", x_pos, "y_pos=", y_pos, "number=", number)
         for index in range(number):
+            print("Index=", index)
             self._AddHoles(x_pos, y_pos)
             if direction == HOLES_RIGHT:
-                ++x_pos
+                x_pos += 1
             elif direction == HOLES_LEFT:
-                -x_pos
+                x_pos -= 1
             elif direction == HOLES_DOWN:
-                ++y_pos
+                y_pos += 1
             elif direction == HOLES_UP:
-                --y_pos
+                y_pos -= 1
             else:
                 raise Exception("Invalid direction", direction)
                 
@@ -62,6 +65,7 @@ class MeccanoPart:
     def DrawDxf(self, the_output):
         init_output_fd(the_output)
         self._DrawBorder(the_output)
+        print("Number holes:", len(self._holes))
         for x_pos, y_pos in self._holes:
             draw_hole_actual(the_output, x_pos * mecano_step, y_pos * mecano_step, mecano_hole, COLOR_BLACK)
         exit_output_fd(the_output)
