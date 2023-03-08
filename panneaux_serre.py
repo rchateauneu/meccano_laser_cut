@@ -1,24 +1,13 @@
 # Fabriquer un fichier DXF pour un laser cutter CNC.
 # https://people.bath.ac.uk/ps281/teaching/maths3c/2DPinned_07_WritingDXFs.pdf
 
-# Meccano system dates back to 1901 and is designed to Imperial sizes ie 1/2 inch hole spacings
-# Plain holes in all Meccano parts are all 4.1mm in diameter, and are spaced at 1/2" (12.7mm),
-# with some modern parts having twice as many holes to give a 1/4" (6.3mm) spacing.
-# Meccano axles are a running fit in the holes, and are 4.06mm in diameter.
-# This is actually an old Imperial SWG (Standard Wire Gauge) size 8.
-mecano_step = 12.7
-mecano_hole = 2.05
+from meccano import *
 
-HOLES_LEFT = 1
-HOLES_RIGHT = 2
-HOLES_UP = 3
-HOLES_DOWN = 4
 
 # Eliminates duplicates lines and holes.
 cache_lines = None
 cache_holes = None
 
-from dxflib import *
 
 def init_output(path_name):
     print("init_output", path_name)
@@ -26,7 +15,8 @@ def init_output(path_name):
     cache_lines = set()
     cache_holes = set()
 
-    the_output = init_output_actual(path_name)
+    the_output = open(path_name, "w")
+    init_output_fd(the_output)
     return the_output
 
 
@@ -100,10 +90,12 @@ def draw_sheet_1_2():
         draw_rectangle_with_holes(the_output, x_offset, 16+10+11, 25, 10)
 
     the_output = init_output("sheet_1_2.dxf")
+    init_output(the_output)
     draw_third_1_2(the_output, 0)
     draw_third_1_2(the_output, 25)
     draw_third_1_2(the_output, 25+25)
-    exit_output(the_output)
+    exit_output_fd(the_output)
+    the_output.close()
     
 
 def draw_sheet_3():
@@ -115,7 +107,8 @@ def draw_sheet_3():
     draw_third_3(the_output, 0)
     draw_third_3(the_output, 25)
     draw_third_3(the_output, 25+25)
-    exit_output(the_output)
+    exit_output_fd(the_output)
+    the_output.close()
 
 
 draw_sheet_1_2()

@@ -4,8 +4,7 @@ COLOR_BLACK = 0
 COLOR_LIGHT_BLUE = 4
 COLOR_DARK_BLUE = 5
 
-def init_output_actual(path_name):
-    the_output = open(path_name, "w")
+def init_output_fd(the_output):
     the_output.write("""\
 0
 SECTION
@@ -15,14 +14,13 @@ ENTITIES
     return the_output
 
 
-def exit_output(the_output):
+def exit_output_fd(the_output):
     the_output.write("""\
 0
 ENDSEC
 0
 EOF
 """)
-    the_output.close()
 
 
 def draw_line_actual(the_output, x_start, y_start, x_end, y_end, line_color):

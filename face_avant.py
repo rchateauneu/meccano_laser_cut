@@ -35,7 +35,8 @@ def draw_hole_cross(the_output, x_pos, y_pos, hole_diameter, hole_color):
 
 
 def draw_face_avant():
-    the_output = init_output_actual("face_avant.dxf")
+    the_output = open("face_avant.dxf", "w")
+    the_output = init_output_fd(the_output)
     draw_rect(the_output, xa, ya, xb, yb, COLOR_DARK_BLUE)
     draw_rect(the_output, xa + x_offset_cadran, ya + y_offset_cadran, xa + x_offset_cadran + x_cadran, ya + y_offset_cadran + y_cadran, COLOR_BLACK)
     
@@ -61,7 +62,8 @@ def draw_face_avant():
     draw_hole_cross(the_output, x_offset_leds, y_leds + 1.5 * y_space_led, led_radius, COLOR_DARK_BLUE)
     draw_hole_cross(the_output, x_offset_leds, y_leds + 2.5 * y_space_led, led_radius, COLOR_DARK_BLUE)
 
-    exit_output(the_output)
+    exit_output_fd(the_output)
+    the_output.close()
 
 
 draw_face_avant()
