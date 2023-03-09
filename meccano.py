@@ -27,11 +27,11 @@ class MeccanoPart:
         if x_pos >= self._x_size:
             raise Exception("Too big x_pos ", x_pos)
         if y_pos < 0:
-            raise Exception("Negative x_pos ", x_pos)
+            raise Exception("Negative y_pos ", y_pos)
         if y_pos >= self._y_size:
             raise Exception("Too big y_pos ", y_pos)
         self._holes.add((x_pos, y_pos))
-        print("Adding", (x_pos, y_pos))
+        #print("Adding", (x_pos, y_pos))
 
     def Line(self, x_pos, y_pos, number, direction = HOLES_RIGHT):
         print("x_pos=", x_pos, "y_pos=", y_pos, "number=", number)
@@ -50,9 +50,10 @@ class MeccanoPart:
                 raise Exception("Invalid direction", direction)
                 
     def Rectangle(self, x_pos, y_pos, x_number, y_number):
+        print("x_pos=", x_pos, "y_pos=", y_pos, "x_number=", x_number, "y_number=", y_number)
         for index in range(x_number):
-            self.Line(x_pos, y_pos, y_number, HOLES_RIGHT)
-            ++x_pos
+            self.Line(x_pos, y_pos, y_number, HOLES_DOWN)
+            x_pos += 1
                     
     def _DrawBorder(self, the_output):
         x_end = self._x_size * mecano_step
@@ -67,7 +68,7 @@ class MeccanoPart:
         self._DrawBorder(the_output)
         print("Number holes:", len(self._holes))
         for x_pos, y_pos in self._holes:
-            draw_hole_actual(the_output, x_pos * mecano_step, y_pos * mecano_step, mecano_hole, COLOR_BLACK)
+            draw_hole_actual(the_output, (0.5 + x_pos) * mecano_step, (0.5 + y_pos) * mecano_step, mecano_hole, COLOR_BLACK)
         exit_output_fd(the_output)
 
 
