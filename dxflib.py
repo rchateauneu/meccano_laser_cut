@@ -28,7 +28,7 @@ def draw_line_actual(the_output, x_start, y_start, x_end, y_end, line_color):
 0
 LINE
 8
-Undeflected
+MyLayer
 10
 %lf
 20
@@ -47,7 +47,7 @@ def draw_hole_actual(the_output, x_pos, y_pos, hole_diameter, hole_color):
 0
 CIRCLE
 8
-Undeflected
+MyLayer
 10
 %lf
 20
@@ -59,3 +59,27 @@ Undeflected
 62
 %d
 """ % (x_pos, y_pos, hole_diameter, hole_color))
+
+
+def draw_arc(the_output, x_pos, y_pos, hole_diameter, angle_start, angle_end, hole_color):
+    the_output.write("""\
+0
+ARC
+8
+MyLayer
+10
+%lf
+20
+%lf
+30
+0.0
+40
+%lf
+50
+%lf
+51
+%lf
+62
+%d
+""" % (x_pos, y_pos, hole_diameter, angle_start, angle_end, hole_color))
+

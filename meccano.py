@@ -54,18 +54,39 @@ class MeccanoPart:
         for index in range(x_number):
             self.Line(x_pos, y_pos, y_number, HOLES_DOWN)
             x_pos += 1
-                    
-    def _DrawBorder(self, the_output):
+
+    def _DrawBorderSquare(self, the_output):
         x_end = self._x_size * mecano_step
         y_end = self._y_size * mecano_step
+
         draw_line_actual(the_output, 0, 0, 0, y_end, COLOR_BLACK)
         draw_line_actual(the_output, 0, y_end, x_end, y_end, COLOR_BLACK)
         draw_line_actual(the_output, x_end, y_end, x_end, 0, COLOR_BLACK)
         draw_line_actual(the_output, x_end, 0, 0, 0, COLOR_BLACK)
 
+    def _DrawBorderRounded(self, the_output):
+        half_step = mecano_step * 0.5
+        x_end = self._x_size * mecano_step
+        y_end = self._y_size * mecano_step
+        x_end_half = x_end - half_step
+        y_end_half = y_end - half_step
+
+        draw_line_actual(the_output, 0, half_step, 0, y_end_half, COLOR_BLACK)
+        draw_line_actual(the_output, half_step, y_end, x_end_half, y_end, COLOR_BLACK)
+        draw_line_actual(the_output, x_end, y_end_half, x_end, half_step, COLOR_BLACK)
+        draw_line_actual(the_output, x_end_half, 0, half_step, 0, COLOR_BLACK)
+
+        right_angle = 90.0
+
+        border_radius = mecano_step * 0.5
+        draw_arc(the_output, half_step, half_step, border_radius, 2 * right_angle, 3 * right_angle, COLOR_BLACK)
+        draw_arc(the_output, half_step, y_end_half, border_radius, right_angle, 2 * right_angle, COLOR_BLACK)
+        draw_arc(the_output, x_end_half, y_end_half, border_radius, 0, right_angle, COLOR_BLACK)
+        draw_arc(the_output, x_end_half, half_step, border_radius, 3 * right_angle, 0.0, COLOR_BLACK)
+
     def DrawDxf(self, the_output):
         init_output_fd(the_output)
-        self._DrawBorder(the_output)
+        self._DrawBorderRounded(the_output)
         print("Number holes:", len(self._holes))
         for x_pos, y_pos in self._holes:
             draw_hole_actual(the_output, (0.5 + x_pos) * mecano_step, (0.5 + y_pos) * mecano_step, mecano_hole, COLOR_BLACK)
@@ -73,7 +94,8 @@ class MeccanoPart:
 
 
 if __name__ == "__main__":
-    #  python .\meccano.py toto.dxf 20 20 Line 1 1 10
+    # python .\meccano.py t_line.dxf 10 1 Line 0 0 10
+    # python .\meccano.py t_rect.dxf 10 5 Rectangle 0 0 10 5
     filename = sys.argv[1]
     print("filename=", filename)
     if not filename.endswith(".dxf"):
