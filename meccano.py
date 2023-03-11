@@ -54,7 +54,15 @@ class MeccanoPart:
         for index in range(x_number):
             self.Line(x_pos, y_pos, y_number, HOLES_DOWN)
             x_pos += 1
-
+            
+    # Triplet pythagoricien.
+    # 3 - 4 - 5
+    # 5 - 12 - 13
+    # https://fr.wikipedia.org/wiki/Triplet_pythagoricien
+    # Ca sert a pouvoir assembler des angles non-droits.
+    
+            
+    # TODO: Ajouter un flag pour des bords droits ou arrondis.
     def _DrawBorderSquare(self, the_output):
         x_end = self._x_size * mecano_step
         y_end = self._y_size * mecano_step
