@@ -1,4 +1,5 @@
 import sys
+import math
 
 from dxflib import *
 
@@ -36,7 +37,6 @@ class MeccanoPart:
     def Line(self, x_pos, y_pos, number, direction = HOLES_RIGHT):
         print("x_pos=", x_pos, "y_pos=", y_pos, "number=", number)
         for index in range(number):
-            print("Index=", index)
             self._AddHoles(x_pos, y_pos)
             if direction == HOLES_RIGHT:
                 x_pos += 1
@@ -59,8 +59,32 @@ class MeccanoPart:
     # 3 - 4 - 5
     # 5 - 12 - 13
     # https://fr.wikipedia.org/wiki/Triplet_pythagoricien
-    # Ca sert a pouvoir assembler des angles non-droits.
-    
+    # Find the closest Pythagorean triple.
+    # This creates a right triangle.
+    # This is useful to assemble sheets on non-right angles.
+    # They could be used to triangularize 3D spline curves.
+    def Pythagore(self, x_pos, y_pos, x_number, y_number):
+        x_iter = x_number
+        y_iter = y_number
+        # TODO: This is not a very good function.
+        while True:
+            print("Triangle : Trying x=", x_iter, "y=", y_iter)
+            c_square = x_iter * x_iter + y_iter * y_iter
+            c_number = int(math.sqrt(c_square))
+            if c_number * c_number == c_square:
+                break
+            if (x_iter - x_number) / x_number > (y_iter - y_number) / y_number:
+                y_iter += 1
+            else:
+                x_iter += 1
+        print("Triangle : OK x=", x_iter, "y=", y_iter, "x=", c_number)
+        self.Line(x_pos, y_pos, x_iter + 1, HOLES_RIGHT)
+        self.Line(x_pos, y_pos, y_iter + 1, HOLES_DOWN)
+        ratio = 1.0 / (c_number + 1.0)
+        for c_index in range(1, c_number + 1):
+            x_hole = x_pos + x_iter * c_index * ratio
+            y_hole = y_pos + y_iter * (1.0 - c_index * ratio)
+            self._holes.add((x_hole, y_hole))
             
     # TODO: Ajouter un flag pour des bords droits ou arrondis.
     def _DrawBorderSquare(self, the_output):
