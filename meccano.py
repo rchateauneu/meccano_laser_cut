@@ -54,26 +54,36 @@ def _DrawBorder(the_output, x_size, y_size):
 
 
 def _DrawBorderTriangle(the_output, x_size, y_size):
-    half_step = mecano_step * 0.5
+    border_radius = mecano_step * 0.5
     x_end = x_size * mecano_step
     y_end = y_size * mecano_step
-    x_end_half = x_end - half_step
-    y_end_half = y_end - half_step
-    angle = math.atan(y_size / x_size) * 180.0 / 3.14159
+    x_end_half = x_end - border_radius
+    y_end_half = y_end - border_radius
+    # Between 0 degrees (if y is small, horizontal triangle) and 90 degrees (if x small, vertical triangle)
+    
+    angle_radian = math.atan(y_size / x_size)
+    angle_degree = angle_radian * 180.0 / 3.14159
+    print("angle_degree=", angle_degree)
 
-    draw_line_actual(the_output, 0, half_step, 0, y_end_half, COLOR_BLACK)
-    draw_line_actual(the_output, x_end_half, 0, half_step, 0, COLOR_BLACK)
-    draw_line_actual(the_output, x_end, 0, 0, y_end, COLOR_BLACK)
+    draw_line_actual(the_output, 0, border_radius, 0, y_end_half, COLOR_BLACK)
+    draw_line_actual(the_output, x_end_half, 0, border_radius, 0, COLOR_BLACK)
+
+    # print("border_radius=", border_radius, "x_top_diagonal=", x_top_diagonal)
+    x_top_diagonal = border_radius + border_radius * math.sin(angle_radian)
+    y_top_diagonal = y_end_half + border_radius * math.cos(angle_radian)
+    x_bottom_diagonal = x_end_half + border_radius * math.sin(angle_radian)
+    y_bottom_diagonal = border_radius + border_radius * math.cos(angle_radian)
+
+    draw_line_actual(the_output, x_top_diagonal, y_top_diagonal, x_bottom_diagonal, y_bottom_diagonal, COLOR_BLACK)
 
     right_angle = 90.0
 
-    border_radius = mecano_step * 0.5
-    draw_arc(the_output, half_step, half_step, border_radius, 2 * right_angle, 3 * right_angle, COLOR_BLACK)
+    draw_arc(the_output, border_radius, border_radius, border_radius, 2 * right_angle, 3 * right_angle, COLOR_BLACK)
 
-    angle_top = right_angle - angle
-    draw_arc(the_output, half_step, y_end_half, border_radius, angle_top, 2 * right_angle, COLOR_BLACK)
-    angle_right = right_angle - angle
-    draw_arc(the_output, x_end_half, half_step, border_radius, 3 * right_angle, angle_right, COLOR_BLACK)
+    angle_top = right_angle - angle_degree
+    draw_arc(the_output, border_radius, y_end_half, border_radius, angle_top, 2 * right_angle, COLOR_BLACK)
+    angle_right = right_angle - angle_degree
+    draw_arc(the_output, x_end_half, border_radius, border_radius, 3 * right_angle, angle_right, COLOR_BLACK)
 
 
 class MeccanoPart:
@@ -167,23 +177,22 @@ class MeccanoPart:
                     y_iter += 1
                 else:
                     x_iter += 1
-            print("Triangle : OK x=", x_iter, "y=", y_iter, "x=", c_number)
+            print("Triangle : OK x=", x_iter, "y=", y_iter, "c=", c_number)
 
-            for x_pos_sub in range(x_number):
+            for x_pos_sub in range(x_iter):
                 self._AddHoles(x_pos_sub, 0)
-            for y_pos_sub in range(y_number):
+            for y_pos_sub in range(y_iter):
                 self._AddHoles(0, y_pos_sub)
 
             ratio = 1.0 / (c_number + 1.0)
             for c_index in range(1, c_number + 1):
                 x_hole = x_iter * c_index * ratio
                 y_hole = y_iter * (1.0 - c_index * ratio)
-                self._AddHoles(_hole, y_hole)
-            return x_iter, y_iter
+                self._AddHoles(x_hole, y_hole)
                 
             def TriangleBoundary(the_output):
-                _DrawBorder(the_output, x_number, y_number)
-            return RectangleBoundary
+                _DrawBorderTriangle(the_output, x_iter, y_iter)
+            return TriangleBoundary
 
 
 if __name__ == "__main__":
@@ -205,9 +214,9 @@ if __name__ == "__main__":
     meccano = MeccanoPart(file_output)
     # Position (0, 0)
     tracer = MeccanoPart.ObjectTracer(meccano, 0, 0)
+    function_obj = getattr(tracer, function_name)
 
     # By convention, all functions return a function which draws the boundary.
-    function_obj = getattr(tracer, function_name)
     boundary_tracer = function_obj(*int_line_arguments)
     boundary_tracer(file_output)
     
