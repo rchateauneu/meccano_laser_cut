@@ -53,7 +53,7 @@ def _DrawBorder(the_output, x_size, y_size):
     _DrawBorderRounded(the_output, x_size, y_size)
 
 
-def _DrawBorderTriangle(the_output, x_size, y_size):
+def _DrawBorderTriangle(the_output, x_size, y_size, c_number):
     border_radius = mecano_step * 0.5
     x_end = x_size * mecano_step
     y_end = y_size * mecano_step
@@ -61,14 +61,13 @@ def _DrawBorderTriangle(the_output, x_size, y_size):
     y_end_half = y_end - border_radius
     # Between 0 degrees (if y is small, horizontal triangle) and 90 degrees (if x small, vertical triangle)
     
-    angle_radian = math.atan(y_size / x_size)
+    angle_radian = math.atan( (y_size-1) / (x_size-1))
     angle_degree = angle_radian * 180.0 / 3.14159
-    print("angle_degree=", angle_degree)
+    print("angle_degree=", angle_degree, "c_number=", c_number)
 
     draw_line_actual(the_output, 0, border_radius, 0, y_end_half, COLOR_BLACK)
     draw_line_actual(the_output, x_end_half, 0, border_radius, 0, COLOR_BLACK)
 
-    # print("border_radius=", border_radius, "x_top_diagonal=", x_top_diagonal)
     x_top_diagonal = border_radius + border_radius * math.sin(angle_radian)
     y_top_diagonal = y_end_half + border_radius * math.cos(angle_radian)
     x_bottom_diagonal = x_end_half + border_radius * math.sin(angle_radian)
@@ -85,6 +84,17 @@ def _DrawBorderTriangle(the_output, x_size, y_size):
     angle_right = right_angle - angle_degree
     draw_arc(the_output, x_end_half, border_radius, border_radius, 3 * right_angle, angle_right, COLOR_BLACK)
 
+    # BEWARE: The diagonal line of holes does not fit with vertical and horizontal holes.
+    x_hole_diag_top = border_radius
+    y_hole_diag_top = y_end_half
+    x_diagonal_step = mecano_step * math.cos(angle_radian)
+    y_diagonal_step = mecano_step * math.sin(angle_radian)
+
+    for index in range(1, c_number):
+        x_hole = x_hole_diag_top + x_diagonal_step * index
+        y_hole = y_hole_diag_top - y_diagonal_step * index
+        draw_hole_actual(the_output, x_hole, y_hole, mecano_hole, COLOR_BLACK)
+
 
 class MeccanoPart:
     def __init__(self, file_output):
@@ -96,7 +106,6 @@ class MeccanoPart:
         exit_output_fd(self._file_output)
         
     def DrawDxf(self):
-        #self._DrawBorderRounded(the_output, x_size, y_size)
         print("Number holes:", len(self._holes))
         for x_pos, y_pos in self._holes:
             draw_hole_actual(self._file_output, (0.5 + x_pos) * mecano_step, (0.5 + y_pos) * mecano_step, mecano_hole, COLOR_BLACK)
@@ -166,10 +175,10 @@ class MeccanoPart:
         def Pythagore(self, x_number, y_number):
             x_iter = x_number
             y_iter = y_number
-            # TODO: This is not a very good function.
+            # TODO: This is not a very good method to find the next Pythagorean triple.
             while True:
                 print("Triangle : Trying x=", x_iter, "y=", y_iter)
-                c_square = x_iter * x_iter + y_iter * y_iter
+                c_square = (x_iter - 1 ) * (x_iter - 1 ) + (y_iter - 1 ) * (y_iter - 1 )
                 c_number = int(math.sqrt(c_square))
                 if c_number * c_number == c_square:
                     break
@@ -184,14 +193,8 @@ class MeccanoPart:
             for y_pos_sub in range(y_iter):
                 self._AddHoles(0, y_pos_sub)
 
-            ratio = 1.0 / (c_number + 1.0)
-            for c_index in range(1, c_number + 1):
-                x_hole = x_iter * c_index * ratio
-                y_hole = y_iter * (1.0 - c_index * ratio)
-                self._AddHoles(x_hole, y_hole)
-                
             def TriangleBoundary(the_output):
-                _DrawBorderTriangle(the_output, x_iter, y_iter)
+                _DrawBorderTriangle(the_output, x_iter, y_iter, c_number)
             return TriangleBoundary
 
 
